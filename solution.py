@@ -32,9 +32,24 @@ def naked_twins(values):
     Returns:
         the values dictionary with the naked twins eliminated from peers.
     """
-
     # Find all instances of naked twins
+    # iterate all the units
+    for key, ulists in units.items():
+        # previuosly only considered 2 length values since we are dealing with twins, 
+        # but have extended to triplets or more so we can consider more lengths
+        # if len(values[key]) != 2:
+        #     continue
+        for ulist in ulists:
+            # check to find if there are exactly as many same values as the length of this one
+            if sum([values[key] is values[x] for x in ulist]) == len(values[key]): # I've changed this number from 2 to len(values[key]) for multiple consideration
+                for x in ulist:
+                    # leaving the twins(multiples) that we are considering
+                    if values[x] is not values[key]:
+                        # remove each digit carefully                         
+                        for digit in values[key]:
+                            values[x] = values[x].replace(digit, '')
     # Eliminate the naked twins as possibilities for their peers
+    return values
 
 def grid_values(grid):
     """
@@ -72,7 +87,7 @@ def eliminate(values):
     one_values = [key for key in values.keys() if len(values[key]) is 1]
     for value in one_values:
         for peer in peers[value]:
-                values[peer] = values[peer].replace(values[value], '')
+                assign_value(values, peer, values[peer].replace(values[value], ''))
     return values
 
 def only_choice(values):
@@ -80,7 +95,7 @@ def only_choice(values):
         for u_list in u_lists:
             for digit in values[key]:
                 if all([digit not in values[u] or u == key for u in u_list]):
-                    values[key] = digit
+                    assign_value(values, key, digit)
     return values
 
 def reduce_puzzle(values):
@@ -116,7 +131,7 @@ def search(values):
     # Now use recursion to solve each one of the resulting sudokus, and if one returns a value (not False), return that answer!
     for digit in values[chosen_box]:
         values_copy = values.copy()
-        values_copy[chosen_box] = digit
+        assign_values(values_copy, chosen_box, digit)
         result = search(values_copy)
         if result:
             return result
