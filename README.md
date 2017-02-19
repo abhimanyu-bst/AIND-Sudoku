@@ -3,11 +3,15 @@
 
 # Question 1 (Naked Twins)
 Q: How do we use constraint propagation to solve the naked twins problem?  
-A: *Student should provide answer here*
+A: I somehow visualize naked twins as an extension to the elimintaion strategy. In elimination, we are sure that a box has a single value therefore its peers cannot have this value. Similarly, when we have two boxes which share 2 same values, we are sure that the rest of the peers cannot have any of these 2 digits. I also extended this idea (please correct me if I'm wrong) to 3 or even more boxes which share exactly same value equal to the length in consideration. 
+
+1 box -> length 1
+2 box -> length 2 (twins)
+3 box -> length 3 and so on..
 
 # Question 2 (Diagonal Sudoku)
 Q: How do we use constraint propagation to solve the diagonal sudoku problem?  
-A: *Student should provide answer here*
+A: In diagonal sudoku, we added a constraint of diagonal values containing 1-9. We can simply add this to our previous constraints (1-9 in a row, column and 3*3 square). 
 
 ### Install
 

@@ -1,3 +1,4 @@
+from operator import add
 assignments = []
 rows = 'ABCDEFGHI'
 cols = '123456789'
@@ -10,7 +11,9 @@ boxes = cross(rows, cols)
 row_units = [cross(r, cols) for r in rows]
 column_units = [cross(rows, c) for c in cols]
 square_units = [cross(rs, cs) for rs in ('ABC','DEF','GHI') for cs in ('123','456','789')]
-unitlist = row_units + column_units + square_units
+diagonal_units = [list(map(add, rows, cols))]
+diagonal_units.append(list(map(add, rows, cols[::-1])))
+unitlist = row_units + column_units + square_units + diagonal_units
 units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
 peers = dict((s, set(sum(units[s],[]))-set([s])) for s in boxes)
 
@@ -32,9 +35,12 @@ def naked_twins(values):
     Returns:
         the values dictionary with the naked twins eliminated from peers.
     """
+
+    unitlist_without_diagonal = row_units + column_units + square_units
+    units_without_diagonal = dict((s, [u for u in unitlist_without_diagonal if s in u]) for s in boxes)
     # Find all instances of naked twins
     # iterate all the units
-    for key, ulists in units.items():
+    for key, ulists in units_without_diagonal.items():
         # previuosly only considered 2 length values since we are dealing with twins, 
         # but have extended to triplets or more so we can consider more lengths
         # if len(values[key]) != 2:
@@ -131,7 +137,7 @@ def search(values):
     # Now use recursion to solve each one of the resulting sudokus, and if one returns a value (not False), return that answer!
     for digit in values[chosen_box]:
         values_copy = values.copy()
-        assign_values(values_copy, chosen_box, digit)
+        assign_value(values_copy, chosen_box, digit)
         result = search(values_copy)
         if result:
             return result
@@ -146,6 +152,8 @@ def solve(grid):
     Returns:
         The dictionary representation of the final sudoku grid. False if no solution exists.
     """
+    # Just added diagonal units to the global variables
+    return search(grid_values(grid))
 
 if __name__ == '__main__':
     diag_sudoku_grid = '2.............62....1....7...6..8...3...9...7...6..4...4....8....52.............3'
